@@ -1,1 +1,1 @@
-docker build -t cpplib-core .
+docker build -t cpplib-core docker/
