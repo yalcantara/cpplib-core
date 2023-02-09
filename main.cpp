@@ -6,12 +6,10 @@
 
 #include <optional>
 
-#include <ylib/db/dpiw.h>
 #include <ylib/logging/Logger.h>
 #include <ylib/web/rest.h>
 
 using namespace ylib::core;
-using namespace ylib::db::dpiw;
 using namespace ylib::logging;
 using namespace ylib::web;
 using namespace web;

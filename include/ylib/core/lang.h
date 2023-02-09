@@ -171,7 +171,7 @@ string anyToStr(T& ref) {
 
 	if (is_same<T, const char*>::value) {
 
-		string ans{ ref };
+		string ans{ (const char*)ptr };
 		return ans;
 	}
 
