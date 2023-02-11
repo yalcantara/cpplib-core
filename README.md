@@ -82,6 +82,7 @@ ERROR  00:21:22.333  [main] - An error message
 Some classes are meant to avoid the pain of C++ idiosyncrasies. For example, the `Bool` class solves the issue of the weak type of C++ bool. It comes with the constant `True` and `False`. Also, the `println` function is overloaded, to simplify printing to the standard output. The `LocalDate` and `LocalDateTime` are inspired by the new Java Time Library. The methods `checkParamNotEmpty` & `checkParamBetween`,  helps validate method parameters.
 
 ```cpp
+//using the Bool class
 Bool is_positive(int num) {
     if (num > 0) {
         return True;
@@ -100,7 +101,12 @@ int my_function(const char* str){
 
 ```cpp
 LocalDate date;
-println(date.toString());
+println(date.toString()); //2023-02-27
+```
+
+```cpp
+string str = sfput("The '${}' lib is written in ${}.", "cpplib-core", "C++");
+println(str); //The 'cpplib-core' lib is written in C++.
 ```
 
 ## Contributing
