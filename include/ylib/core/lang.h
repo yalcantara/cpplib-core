@@ -194,64 +194,6 @@ string anyToStr(T& ref) {
 	return "[other]";
 }
 
-
-template<typename T>
-string sfput(string& txt, T arg) {
-
-	size_t len = txt.length();
-
-	if (len == 0) {
-		return "";
-	}
-
-	const char* KEY = "${}";
-	size_t KEYLEN = 3;
-
-	size_t idx = txt.find(KEY);
-
-	if (idx == string::npos) {
-		string copy{ txt };
-		return copy;
-	}
-
-	std::stringstream ss;
-
-	size_t i = 0;
-	for (; i < idx; i++) {
-		ss << txt.at(i);
-	}
-	
-	ss << anyToStr(arg);
-
-	i = i + KEYLEN;
-	for (; i < len; i++) {
-		ss << txt.at(i);
-	}
-	
-	return ss.str();
-}
-
-string sfput(string& txt) {
-	string msg{ txt };
-	return msg;
-}
-
-template<typename T, typename... Args>
-string sfput(string& txt, T rep, Args... arg) {
-	string mid = sfput(txt, rep);
-	return sfput(mid, arg...);
-}
-
-template<typename T, typename... Args>
-string sfput(const char* txt, T rep, Args... arg) {
-	string stxt{ txt };
-	string mid = sfput(stxt, rep);
-	return sfput(mid, arg...);
-}
-
-
-
-
 //Method parameters validation
 //=====================================================================
 string __ylib_core_trim(const string& txt) {
@@ -295,10 +237,16 @@ string __ylib_core_trim(const string& txt) {
 	string ans = txt.substr(start, diff);
 	return ans;
 }
+template<typename T>
+void checkParamNotNull(const char* name, T* val) {
+	if (val == nullptr || val == NULL) {
+		throw Exception(sfput("The param ${} can not be empty or null. Got nullptr.", name));
+	}
+}
 
 void checkParamNotEmpty(const char* name, string& val) {
 	string* ptr = &val;
-	if (ptr == nullptr) {
+	if (ptr == nullptr || ptr == NULL) {
 		throw Exception(sfput("The param ${} can not be empty or null. Got nullptr.", name));
 	}
 
@@ -313,6 +261,9 @@ void checkParamNotEmpty(const char* name, string& val) {
 }
 
 void checkParamNotEmpty(const char* name, const char* val) {
+	if (val == nullptr || val == NULL) {
+		throw Exception(sfput("The param ${} can not be empty or null. Got nullptr.", name));
+	}
 	string sval{ val };
 	checkParamNotEmpty(name, sval);
 }
@@ -373,8 +324,6 @@ void println() {
 	fputc('\n', stdout);
 	fflush(stdout);
 }
-
-
 
 void println(char c) {
 	fputc(c, stdout);
@@ -469,3 +418,56 @@ void println(const std::vector<string>& vec){
 }
 //====================================================
 
+template<typename T>
+string sfput(string& txt, T arg) {
+
+	size_t len = txt.length();
+
+	if (len == 0) {
+		return "";
+	}
+
+	const char* KEY = "${}";
+	size_t KEYLEN = 3;
+
+	size_t idx = txt.find(KEY);
+
+	if (idx == string::npos) {
+		string copy{ txt };
+		return copy;
+	}
+
+	std::stringstream ss;
+
+	size_t i = 0;
+	for (; i < idx; i++) {
+		ss << txt.at(i);
+	}
+	
+	ss << anyToStr(arg);
+
+	i = i + KEYLEN;
+	for (; i < len; i++) {
+		ss << txt.at(i);
+	}
+	
+	return ss.str();
+}
+
+string sfput(string& txt) {
+	string msg{ txt };
+	return msg;
+}
+
+template<typename T, typename... Args>
+string sfput(string& txt, T rep, Args... arg) {
+	string mid = sfput(txt, rep);
+	return sfput(mid, arg...);
+}
+
+template<typename T, typename... Args>
+string sfput(const char* txt, T rep, Args... arg) {
+	string stxt{ txt };
+	string mid = sfput(stxt, rep);
+	return sfput(mid, arg...);
+}

@@ -1,4 +1,11 @@
 
+# User defined
+Debug
+Docker_Debug
+Release
+logs
+.vscode
+
 # Mac
 *.DS_Store
 

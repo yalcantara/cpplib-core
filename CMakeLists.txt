@@ -6,9 +6,6 @@ set(CMAKE_CXX_STANDARD 17)
 include_directories(include)
 add_executable(main main.cpp)
 
-#Uncomment the following line if dl lib is needed
-target_link_libraries(main ${CMAKE_DL_LIBS})
-
 find_package(Boost REQUIRED COMPONENTS system)
 find_package(OpenSSL 1.0.0 REQUIRED)
 

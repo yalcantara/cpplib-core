@@ -127,17 +127,17 @@ tuple<tm, Int16> instant(Bool gmt) {
 }
 
 Bool isLeap(Int32 year) {
-    if(year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)){
+    if (year % 4 == 0 && (year % 100 != 0 || year % 400 == 0)) {
         return True;
     }
     return False;
 }
 
 Bool is30Month(Int8 month) {
-    if(     month == Month::April ||
+    if (     month == Month::April ||
             month == Month::June ||
             month == Month::September ||
-            month == Month::November){
+            month == Month::November) {
         return True;
     }
     return False;

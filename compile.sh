@@ -1,7 +1,14 @@
 #!/bin/bash
+#CPD: Container Project Dir
+CPD=/usr/src/cpplib-core
 docker run -it \
-    -v ${PWD}/include:/usr/src/cpplib-core/include \
-    -v ${PWD}/CMAkeLists.txt:/usr/src/cpplib-core/CMakeLists.txt \
-    -v ${PWD}/main.cpp:/usr/src/cpplib-core/main.cpp \
-    -w /usr/src/cpplib-core/Debug \
-     cpplib-core /usr/src/cpplib-core/Debug/build-debug.sh
+    --rm \
+    -v ${PWD}/include:${CPD}/include \
+    -v ${PWD}/CMAkeLists.txt:${CPD}/CMakeLists.txt \
+    -v ${PWD}/Docker_Debug:${CPD}/Debug \
+    -v ${PWD}/main.cpp:${CPD}/main.cpp \
+    -w ${CPD}/Debug \
+     cpplib-core bash -c "
+        cmake -DCMAKE_BUILD_TYPE=Debug ../ && \
+        make
+     "

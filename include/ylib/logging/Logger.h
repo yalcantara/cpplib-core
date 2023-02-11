@@ -31,20 +31,19 @@ public:
 };
 
 
-
+/*
+A very simplistic logger implementation that is also, thread safe. All writes
+inmediatly flushes to the disk avoiding loss of messages in memory. Outputs the 
+log files to the logs/ directory, using current day a rolling appender.
+*/
 class Logger {
 private:
 	const string _name;
     const string _outDir;
     
-
-
     Logger(string name, string outDir) : _name{ name }, _outDir{outDir} {
     }
 
-
-
-  
     //The parameter entry has to be by-value to be sure we have a copy while writing 
     //the contents. This prevent any modification in a race condition.
     void write(Entry entry) {
@@ -66,15 +65,15 @@ private:
         ss << time;
         ss << "  [";
 
-        //we already checked that the name length is <= INT8_MAX int the method:
-        //Logger::get
+        // We already checked that the name length is <= INT8_MAX int the method:
+        // Logger::get
         Int8 len = (Int8)_name.length();
         if (len >= __maxNameLen) {
             ss << _name;
         } else {
             ss << _name;
-            //A compiler warning: the - operator returns an int. Here by this 
-            //casting we are just making sure we are back to Int8.
+            // A compiler warning: the - operator returns an int. Here by this 
+            // casting we are just making sure we are back to Int8.
             Int8 diff = (Int8)(__maxNameLen - len);
             ss << repeat(diff, ' ');
         }
@@ -102,7 +101,7 @@ public:
         checkParamBetween("name.length", len, 1, INT8_MAX);
 
 
-        //Synchronization to prevent race condition
+        // Synchronization to prevent race condition
         Sync sync{ __logger_get_lock };
         __maxNameLen = std::max(__maxNameLen, (Int8)len);
 
@@ -110,8 +109,8 @@ public:
         return ans;
     }
 
-    //2. Copy Assignment
-    //no copy assignment allowed
+    // 2. Copy Assignment
+    // no copy assignment allowed
     Logger& operator=(const Logger& other) = delete;
 
 
