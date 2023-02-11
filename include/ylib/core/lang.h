@@ -88,6 +88,84 @@ bool operator==(Bool a, const Bool b) {
 	return a.val() == b.val();
 }
 
+
+// Core println
+//====================================================
+void print(char c) {
+	fputc(c, stdout);
+	fflush(stdout);
+}
+
+void print(const char* str) {
+	fputs(str, stdout);
+	fflush(stdout);
+}
+
+void print(float val) {
+	fprintf(stdout, "%.2f", val);
+	fflush(stdout);
+}
+
+void print(std::string& str) {
+	const char* ptr = str.c_str();
+	fputs(ptr, stdout);
+	fflush(stdout);
+}
+
+void println() {
+	fputc('\n', stdout);
+	fflush(stdout);
+}
+
+void println(char c) {
+	fputc(c, stdout);
+	fputc('\n', stdout);
+	fflush(stdout);
+}
+
+void println(int val) {
+	fprintf(stdout, "%d\n", val);
+	fflush(stdout);
+}
+
+void println(long int val) {
+	fprintf(stdout, "%ld\n", val);
+	fflush(stdout);
+}
+
+void println(unsigned long int val) {
+	fprintf(stdout, "%lu\n", val);
+	fflush(stdout);
+}
+
+void println(float val) {
+	printf("%.2f\n", val);
+	fflush(stdout);
+}
+
+void println(double val) {
+	printf("%.2f\n", val);
+	fflush(stdout);
+}
+
+void println(const char* str, ...) {
+	va_list args;
+	va_start (args, str);
+	vfprintf(stdout, str, args);
+	va_end(args);
+	fputc('\n', stdout);
+	fflush(stdout);
+}
+
+void println(std::string str) {
+	const char* ptr = str.c_str();
+	fputs(ptr, stdout);
+	fputc('\n', stdout);
+	fflush(stdout);
+}
+//====================================================
+
+
 //Exception
 //====================================================
 class Exception : public exception {
@@ -121,9 +199,6 @@ public:
 
 //Generic Utils
 //====================================================
-
-
-
 template<typename T>
 bool is_primitive() {
 	return is_arithmetic < T > ::value || is_same<T, bool>::value;
@@ -170,9 +245,9 @@ string anyToStr(T& ref) {
 	}
 
 	if (is_same<T, const char*>::value) {
-
-		string ans{ (const char*)ptr };
-		return ans;
+		ostringstream oss;
+		oss << ref;
+		return oss.str();
 	}
 
 	if (is_array < T > ::value) {
@@ -183,16 +258,67 @@ string anyToStr(T& ref) {
 		return "[pointer]";
 	}
 
-	if (is_pod < T > ::value) {
-		return "[pod]";
-	}
-
 	if (is_class < T > ::value) {
 		return "[class]";
 	}
 
 	return "[other]";
 }
+
+template<typename T>
+string sfput(string& txt, T arg) {
+
+	size_t len = txt.length();
+
+	if (len == 0) {
+		return "";
+	}
+
+	const char* KEY = "${}";
+	size_t KEYLEN = 3;
+
+	size_t idx = txt.find(KEY);
+
+	if (idx == string::npos) {
+		string copy{ txt };
+		return copy;
+	}
+
+	std::stringstream ss;
+
+	size_t i = 0;
+	for (; i < idx; i++) {
+		ss << txt.at(i);
+	}
+	
+	ss << anyToStr(arg);
+
+	i = i + KEYLEN;
+	for (; i < len; i++) {
+		ss << txt.at(i);
+	}
+	
+	return ss.str();
+}
+
+string sfput(string& txt) {
+	string msg{ txt };
+	return msg;
+}
+
+template<typename T, typename... Args>
+string sfput(string& txt, T rep, Args... arg) {
+	string mid = sfput(txt, rep);
+	return sfput(mid, arg...);
+}
+
+template<typename T, typename... Args>
+string sfput(const char* txt, T rep, Args... arg) {
+	string stxt{ txt };
+	string mid = sfput(stxt, rep);
+	return sfput(mid, arg...);
+}
+
 
 //Method parameters validation
 //=====================================================================
@@ -296,85 +422,8 @@ void checkParamIsPositive(const char* name, Int64 val) {
 //====================================================
 
 
-
-//Printing to STD Out
+// Class printing
 //====================================================
-void print(char c) {
-	fputc(c, stdout);
-	fflush(stdout);
-}
-
-void print(const char* str) {
-	fputs(str, stdout);
-	fflush(stdout);
-}
-
-void print(float val) {
-	fprintf(stdout, "%.2f", val);
-	fflush(stdout);
-}
-
-void print(std::string& str) {
-	const char* ptr = str.c_str();
-	fputs(ptr, stdout);
-	fflush(stdout);
-}
-
-void println() {
-	fputc('\n', stdout);
-	fflush(stdout);
-}
-
-void println(char c) {
-	fputc(c, stdout);
-	fputc('\n', stdout);
-	fflush(stdout);
-}
-
-void println(int val) {
-	fprintf(stdout, "%d\n", val);
-	fflush(stdout);
-}
-
-void println(long int val) {
-	fprintf(stdout, "%ld\n", val);
-	fflush(stdout);
-}
-
-void println(unsigned long int val) {
-	fprintf(stdout, "%lu\n", val);
-	fflush(stdout);
-}
-
-void println(float val) {
-	printf("%.2f\n", val);
-	fflush(stdout);
-}
-
-void println(double val) {
-	printf("%.2f\n", val);
-	fflush(stdout);
-}
-
-
-
-void println(const char* str, ...) {
-	va_list args;
-	va_start (args, str);
-	vfprintf(stdout, str, args);
-	va_end(args);
-	fputc('\n', stdout);
-	fflush(stdout);
-}
-
-void println(std::string str) {
-	const char* ptr = str.c_str();
-	fputs(ptr, stdout);
-	fputc('\n', stdout);
-	fflush(stdout);
-}
-
-
 void println(const Exception& ex){
 	const char* msg = ex.what();
 	string smsg{ msg };
@@ -417,57 +466,3 @@ void println(const std::vector<string>& vec){
 	println(vec, True);
 }
 //====================================================
-
-template<typename T>
-string sfput(string& txt, T arg) {
-
-	size_t len = txt.length();
-
-	if (len == 0) {
-		return "";
-	}
-
-	const char* KEY = "${}";
-	size_t KEYLEN = 3;
-
-	size_t idx = txt.find(KEY);
-
-	if (idx == string::npos) {
-		string copy{ txt };
-		return copy;
-	}
-
-	std::stringstream ss;
-
-	size_t i = 0;
-	for (; i < idx; i++) {
-		ss << txt.at(i);
-	}
-	
-	ss << anyToStr(arg);
-
-	i = i + KEYLEN;
-	for (; i < len; i++) {
-		ss << txt.at(i);
-	}
-	
-	return ss.str();
-}
-
-string sfput(string& txt) {
-	string msg{ txt };
-	return msg;
-}
-
-template<typename T, typename... Args>
-string sfput(string& txt, T rep, Args... arg) {
-	string mid = sfput(txt, rep);
-	return sfput(mid, arg...);
-}
-
-template<typename T, typename... Args>
-string sfput(const char* txt, T rep, Args... arg) {
-	string stxt{ txt };
-	string mid = sfput(stxt, rep);
-	return sfput(mid, arg...);
-}
