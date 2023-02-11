@@ -4,7 +4,7 @@ A header-only commons library for C++, that contains simple-to-use functions and
 
 ## Features
 - Easy to use
-- Header only & no dependencies!
+- Header-only & no dependencies!
 - String manipulation
 - Date and Time utils
 - IO utility functions
