@@ -470,10 +470,5 @@ double squareErr(const Tensor3<T>& a, const Tensor3<T>& b){
     double ans = sum / ((double)size);
     return ans;
 }
-
-
-
-
-
 }
 }

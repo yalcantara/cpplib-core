@@ -1,5 +1,14 @@
-# cpplib-core
+# C++ | cpplib-core
 A header-only commons library for C++, that contains simple-to-use functions and classes that simplify development.
+
+
+## Features
+- Easy to use
+- Header only & no dependencies!
+- String manipulation
+- Date and Time utils
+- IO utility functions
+- Simple Logging mechanism
 
 ## Development
 - C++ 17
@@ -29,11 +38,11 @@ Docker container created. About to run program main.
 INFO   19:33:55.152  [main] - Hello World from cpplib-core. Your C++ common library!!!
 ```
 
-## To use
+## Usage
 Start by cloning the repo in a path that is easy to search from your desired project. The cpplib-core library has no extra dependencies other than the standard C++ libray.
 
-### VS Code
-To add to your VS Code project, it's as simple as adding 
+### As a header
+This is the easiest way to add to your project. Include as a header the path `cpplib-core/include`, and compile normally.
 
 ### CMake
 You can add cpplib-core to your project by using `cmake`. In your `CMakeLists.txt` file, add the following instructions (assuming `main` is the name of your program):
@@ -59,6 +68,7 @@ int main(){
     log.info("An info message");
     log.warn("A warning message");
     log.error("An error message");
+    return 0;
 }
 ```
 Output:
@@ -92,3 +102,6 @@ int my_function(const char* str){
 LocalDate date;
 println(date.toString());
 ```
+
+## Contributing
+ Contributions are welcome to the cpplib-core library! If you have a bugfix or new feature, please create a pull request. If you have any questions, feel free to open an issue.

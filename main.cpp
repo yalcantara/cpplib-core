@@ -8,4 +8,5 @@ Logger log = Logger::get("main");
 
 int main() {
     log.info("Hello World from cpplib-core. Your C++ common library!!!");
+    return 0;
 }
