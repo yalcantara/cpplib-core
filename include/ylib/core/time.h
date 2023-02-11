@@ -72,14 +72,12 @@ bool operator==(Int8 a, Month b) {
         return true;
     }
 
-    if (a == 10 and b == Month::December) {
+    if (a == 12 and b == Month::December) {
         return true;
     }
 
     return false;
 }
-
-
 
 tm ctimeGMT() {
     auto now = system_clock::now();
@@ -143,6 +141,10 @@ Bool is30Month(Int8 month) {
     return False;
 }
 
+
+/*
+Represents a date in the Gregorian calendar, without time. The Date class assumes GMT-0 locale.  
+*/
 class Date {
 private:
     Int32 _year;
@@ -253,7 +255,9 @@ public:
 };
 
 
-
+/*
+Represents a date in the Gregorian calendar, without time using the current system locale.  
+*/
 class LocalDate {
 private:
     Int32 _year;
@@ -329,11 +333,9 @@ public:
     }
 };
 
-
-
-
-
-
+/*
+Represents the current time at GMT-0 up to milliseconds resolution.
+*/
 class Time {
 
 private:
@@ -349,13 +351,9 @@ private:
         checkParamBetween("milli", _milli, 0, MILLI_MAX);
     }
 
-    
-
 public:
 
     static const Int16 MILLI_MAX = 999;
-
-    
 
     Time(Int8 hour, Int8 min, Int8 sec, Int16 milli) :
         _hour{ hour },
@@ -370,8 +368,6 @@ public:
 
     Time(Int8 hour, Int8 min, Int8 sec) : Time(hour, min, sec, 0) {
     }
-
-    
 
     Time() {
         tuple<tm, Int16> ins = instant(True);
@@ -420,7 +416,9 @@ public:
 
 
 
-
+/*
+Represents the current time, using the current system locale, up to milliseconds resolution.
+*/
 class LocalTime {
 
 private:
@@ -439,10 +437,7 @@ private:
     
 
 public:
-
     static const Int16 MILLI_MAX = 999;
-
-    
 
     LocalTime(Int8 hour, Int8 min, Int8 sec, Int16 milli) :
         _hour{ hour },
@@ -457,8 +452,6 @@ public:
 
     LocalTime(Int8 hour, Int8 min, Int8 sec) : LocalTime(hour, min, sec, 0) {
     }
-
-    
 
     LocalTime() {
         tuple<tm, Int16> ins = instant(False);
@@ -491,7 +484,6 @@ public:
         return _milli;
     }
 
-
     string toString() const {
         stringstream ss;
         ss << numFill(_hour, 2, '0');
@@ -511,7 +503,9 @@ public:
 
 
 
-
+/*
+Represents a date with time at GMT-0 locale, using the Date and Time classes.
+*/
 class DateTime {
 private:
     Date _date;
@@ -566,6 +560,9 @@ public:
     }
 };
 
+/*
+Represents a date with time using the current sistem locale, using the LocalDate and LocalTime classes.
+*/
 class LocalDateTime {
 private:
     LocalDate _date;

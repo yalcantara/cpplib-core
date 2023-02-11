@@ -4,13 +4,13 @@ A header-only commons library for C++, that contains simple-to-use functions and
 ## Development
 - C++ 17
 - Docker
-- Linux (Ubuntu 18+)
+- Alpine Linux
 - clang
 - cmake
 
 ## To compile & run 🔥
 
-The compile and run process is automated using <strong>Docker</strong> and some simple scripts.
+The compile and run process is automated using **Docker** and some simple scripts.
 
 First, build the Docker:
 ```shell
@@ -22,25 +22,25 @@ Then, compile & run:
 ./run.sh
 ```
 
+This will run the default `main` program which outputs a hello message to the console output, as well as to the file system as a log. This output file is located at `Docker_Debug/logs/<current_date>.log`. The `${project}/Docker_Debug` folder maps to `${project}/Debug` in the Docker container
+
+```console
+Docker container created. About to run program main.
+INFO   19:33:55.152  [main] - Hello World from cpplib-core. Your C++ common library!!!
+```
+
 ## To use
-Start by cloning the repo in a path that is easy to search from your desired project. The cpplib-core library depends on <strong>Boost</strong> and <strong>cpprest</strong> packages, which are easy to install in Ubuntu:
+Start by cloning the repo in a path that is easy to search from your desired project. The cpplib-core library has no extra dependencies other than the standard C++ libray.
 
-```shell
-apt-get install clang
-apt-get install libcpprest-dev
-apt-get install libboost-system-dev
+### VS Code
+To add to your VS Code project, it's as simple as adding 
+
+### CMake
+You can add cpplib-core to your project by using `cmake`. In your `CMakeLists.txt` file, add the following instructions (assuming `main` is the name of your program):
 ```
+include_directories( <path-to-cpplib/include> )
 
-You can add cpplib to your project by using `cmake`. In your `CMakeLists.txt` file, add the following instructions (assuming `main` is the name of your program):
-```
-include_directories(<path-to-cpplib/include>)
-
-target_link_libraries(main
-        cpprest
-        -lstdc++fs
-        Boost::boost
-        Boost::system
-        OpenSSL::SSL)
+target_link_libraries( main )
 ```
 
 ## Examples

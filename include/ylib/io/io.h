@@ -5,7 +5,7 @@
 #include <string>
 #include <fstream>
 #include <vector>
-#include <experimental/filesystem>
+#include <filesystem>
 
 #include <ylib/core/sutils.h>
 
@@ -16,10 +16,8 @@ namespace io {
         
     typedef std::basic_ofstream<char16_t> u16ofstream;
 
-
-
     vector<string> listFiles(const string& path){
-        namespace fs = std::experimental::filesystem;
+        namespace fs = std::filesystem;
 
         vector<string> ans;
         for (fs::directory_entry entry : fs::directory_iterator(path)){
@@ -31,7 +29,7 @@ namespace io {
 
 
     void write(const string& path, const vector<unsigned char>& data) {
-        ofstream myFile (path, ios::out | ios::binary);
+        std::ofstream myFile (path, ios::out | ios::binary);
         const unsigned char* buffer = data.data();
         myFile.write ((char*)buffer, data.size());
         myFile.close();
@@ -68,7 +66,6 @@ namespace io {
                 throw Exception(sfput("The directory '${}' does not exist and could not be created.", dir));
             }
 
-            
         }
 
         FILE* file = fopen(full.c_str(), mode);
@@ -119,7 +116,7 @@ namespace io {
         writeln(dir.c_str(), fileName.c_str(), mode, content.c_str());
     }
 
-    void writeln(const char* dir, const char* fileName, const char* mode, const string& content){
+    void writeln(const char* dir, const char* fileName, const char* mode, const string& content) {
         writeln(dir, fileName, mode, content.c_str());
     }
 
@@ -132,8 +129,7 @@ namespace io {
     }
 
 
-    string ffull(const char* path){
-
+    string ffull(const char* path) {
 
         FILE *f = fopen(path, "rb");
         if (f == NULL) {
@@ -142,7 +138,6 @@ namespace io {
             throw Exception(msg);
         }
 
-        
         fseek(f, 0, SEEK_END);
         long fsize = ftell(f);
         fseek(f, 0, SEEK_SET);  /* same as rewind(f); */
@@ -151,7 +146,7 @@ namespace io {
         size_t totalRead = fread(txt, 1, fsize, f);
         fclose(f);
 
-        if(totalRead != fsize){
+        if (totalRead != fsize) {
             stringstream ss;
             ss << "Error while reading file: '";
             ss << path;
@@ -166,8 +161,5 @@ namespace io {
 
         return ans;
     }
-
-
-
 }
 }

@@ -46,6 +46,10 @@ using namespace std;
 #endif // !Int64
 
 
+/*
+A convenient class that maps to C++ bool in a type-safe way. Provides the 
+constant True and False, for clarity and consistency.
+*/
 class Bool {
 private:
 	bool _val;
@@ -245,9 +249,9 @@ string anyToStr(T& ref) {
 	}
 
 	if (is_same<T, const char*>::value) {
-		ostringstream oss;
-		oss << ref;
-		return oss.str();
+		stringstream ss;
+		ss << ref;
+		return ss.str();
 	}
 
 	if (is_array < T > ::value) {
@@ -424,7 +428,7 @@ void checkParamIsPositive(const char* name, Int64 val) {
 
 // Class printing
 //====================================================
-void println(const Exception& ex){
+void println(const Exception& ex) {
 	const char* msg = ex.what();
 	string smsg{ msg };
 	string name = typeid(ex).name();
@@ -442,9 +446,9 @@ void print(ostringstream& oss, const std::vector<string>& vec, Bool horizontal) 
 		const std::string& e = vec[i];
 		oss << e;
 		if ((i + 1) < size) {
-			if(horizontal == True) {
+			if (horizontal == True) {
 				oss << ", ";
-			}else{
+			} else {
 				oss << "," << std::endl;
 			}
 		}
@@ -452,17 +456,17 @@ void print(ostringstream& oss, const std::vector<string>& vec, Bool horizontal) 
 	oss << "]";
 }
 
-string vec_to_string(const std::vector<string>& vec, Bool horizontal){
+string vec_to_string(const std::vector<string>& vec, Bool horizontal) {
 	ostringstream oss;
 	print(oss, vec, horizontal);
 	return oss.str();
 }
 
-void println(const std::vector<string>& vec, Bool horizontal){
+void println(const std::vector<string>& vec, Bool horizontal) {
 	println(vec_to_string(vec, horizontal));
 }
 
-void println(const std::vector<string>& vec){
+void println(const std::vector<string>& vec) {
 	println(vec, True);
 }
 //====================================================
