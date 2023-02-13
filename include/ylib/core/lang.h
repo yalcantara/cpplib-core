@@ -6,6 +6,7 @@
 #include <sstream>
 #include <cstdarg>
 #include <cstdint>
+#include <tuple>
 
 using namespace std;
 
@@ -227,7 +228,7 @@ string anyToStr(T& ref) {
 	if (is_integral < T > ::value) {
 
 		if (is_unsigned < T > ::value) {
-			if(is_same<T, unsigned int>::value){
+			if(is_same<T, unsigned int>::value) {
 				return std::to_string(*((unsigned int*)ptr));
 			}
 			return std::to_string(*((unsigned long*)ptr));
@@ -295,7 +296,13 @@ string sfput(string& txt, T arg) {
 		ss << txt.at(i);
 	}
 	
-	ss << anyToStr(arg);
+	if (is_same<T, unsigned char>::value) {
+		//bug in macOs Clang
+		unsigned char *ptr = (unsigned char*)&arg;
+		ss << std::to_string(*ptr);
+	} else {
+		ss << anyToStr(arg);
+	}
 
 	i = i + KEYLEN;
 	for (; i < len; i++) {
@@ -326,16 +333,15 @@ string sfput(const char* txt, T rep, Args... arg) {
 
 //Method parameters validation
 //=====================================================================
-string __ylib_core_trim(const string& txt) {
-
+tuple<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
 	if (txt.length() == 0) {
-		return std::string();
+		return make_tuple(0, 0);
 	}
 
 	size_t len = txt.length();
 	size_t start = 0;
 	size_t end = len;
-	for (Int64 i = 0; i < len; i++) {
+	for (size_t i = 0; i < len; i++) {
 		char c = txt.at(i);
 
 		if (std::isspace(c) == false) {
@@ -354,6 +360,15 @@ string __ylib_core_trim(const string& txt) {
 		}
 	}
 
+	return make_tuple(start, end);
+}
+
+string __ylib_core_trim(const string& txt) {
+
+	tuple<size_t, size_t> range = __ylib_core_find_nonspace(txt);
+	size_t start = get<0>(range);
+	size_t end = get<1>(range);
+
 	if (start == end) {
 		return std::string();
 	}
@@ -367,6 +382,35 @@ string __ylib_core_trim(const string& txt) {
 	string ans = txt.substr(start, diff);
 	return ans;
 }
+
+string trim(const string& txt) {
+	return __ylib_core_trim(txt);
+}
+
+string trim(const string&& txt) {
+    return __ylib_core_trim(txt);
+}
+
+Bool isStrBlank(const char* s) {
+
+	for(size_t i =0; ; i++) {
+		char c = s[i];
+		if (c == '\0') {
+			return True;
+		}
+
+		if (std::isblank(c) == false) {
+			return False;
+		}
+	}
+
+	return True;
+}
+
+Bool isStrBlank(string& s) {
+	return isStrBlank(s.c_str());
+}
+
 template<typename T>
 void checkParamNotNull(const char* name, T* val) {
 	if (val == nullptr || val == NULL) {
@@ -384,8 +428,7 @@ void checkParamNotEmpty(const char* name, string& val) {
 		throw Exception(sfput("The param ${} can not be empty. Got ''.", name));
 	}
 
-	string strim = __ylib_core_trim(val);
-	if (strim.length() == 0) {
+	if (isStrBlank(val) == True) {
 		throw Exception(sfput("The param ${} can not be empty. Got string with whitespaces.", name));
 	}
 }
@@ -468,5 +511,28 @@ void println(const std::vector<string>& vec, Bool horizontal) {
 
 void println(const std::vector<string>& vec) {
 	println(vec, True);
+}
+//====================================================
+
+
+
+// Program Arguments
+//====================================================
+std::vector<string> argToVec(UInt8 argc, char **argv, UInt8 minRequired) {
+	if (argc < minRequired){
+		throw Exception(sfput("The minimun required arguments is ${}, but got ${} instead.", minRequired, argc));
+	}
+
+	std::vector<string> ans;
+	for (UInt8 i = 0; i < argc; i++) {
+		const char *arg = argv[i];
+		if (isStrBlank(arg) == True) {
+			throw Exception(sfput("The argument at index ${} is empty or blank.", i));
+		}
+		string sarg{arg};
+		ans.push_back(sarg);
+	}
+
+	return ans;
 }
 //====================================================

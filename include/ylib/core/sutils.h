@@ -143,32 +143,5 @@ string toLower(const char* txt) {
 	return toLower(stxt);
 }
 
-
-string trim(const string& txt) {
-	return __ylib_core_trim(txt);
-}
-
-string trim(const string&& txt) {
-    return __ylib_core_trim(txt);
-}
-
-Bool isStrBlank(const char* s){
-
-	for(size_t i =0; ; i++){
-		char c = s[i];
-		if(c == '\0'){
-			break;
-		}
-
-		if(isblank(c) == false){
-			return False;
-		}
-	}
-
-	return True;
-}
-
-
-
 }//namespace core
 }//namespace ylib

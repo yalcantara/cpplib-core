@@ -79,39 +79,6 @@ namespace io {
         fclose(file);
     }
 
-    void writeln(const char* dir, const char* fileName, const char* mode, const u16string& content) {
-
-        string full;
-
-        string sdir{ dir };
-        string sfileName{ fileName };
-        if (endsWith(sdir, '/') == True) {
-            full = sdir + fileName;
-        } else {
-            full = sdir + "/" + fileName;
-        }
-
-        struct stat sb;
-        if (stat(dir, &sb) != 0 || S_ISDIR(sb.st_mode) == false) {
-
-            if (mkdir(dir, 0777) != 0) {
-                throw Exception(sfput("The directory '${}' does not exist and could not be created.", dir));
-            }
-
-            
-        }
-
-        FILE* file = fopen(full.c_str(), mode);
-        if (file == NULL) {
-            throw Exception(sfput("Could not open file: '${}'.", full));
-        }
-        fclose(file);
-
-        u16ofstream outfile(full.c_str(), std::ios_base::app);
-        outfile << content; 
-        outfile.close();
-    }
-
     void writeln(string& dir, string& fileName, const char* mode, string& content) {
         writeln(dir.c_str(), fileName.c_str(), mode, content.c_str());
     }
