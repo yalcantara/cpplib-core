@@ -6,7 +6,8 @@
 #include <sstream>
 #include <cstdarg>
 #include <cstdint>
-#include <tuple>
+#include <utility>
+#include <optional>
 
 using namespace std;
 
@@ -44,6 +45,10 @@ using namespace std;
 
 #ifndef Int64
 #define Int64 int64_t
+#endif // !Int64
+
+#ifndef UInt64
+#define UInt64 uint64_t
 #endif // !Int64
 
 
@@ -143,6 +148,11 @@ void println(unsigned long int val) {
 	fflush(stdout);
 }
 
+void println(unsigned int val) {
+    fprintf(stdout, "%u\n", val);
+    fflush(stdout);
+}
+
 void println(float val) {
 	printf("%.2f\n", val);
 	fflush(stdout);
@@ -204,6 +214,15 @@ public:
 
 //Generic Utils
 //====================================================
+
+Bool isNull(const void *ptr) {
+    if (ptr == nullptr || ptr == NULL) {
+        return True;
+    }
+
+    return False;
+}
+
 template<typename T>
 bool is_primitive() {
 	return is_arithmetic < T > ::value || is_same<T, bool>::value;
@@ -333,9 +352,9 @@ string sfput(const char* txt, T rep, Args... arg) {
 
 //Method parameters validation
 //=====================================================================
-tuple<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
+pair<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
 	if (txt.length() == 0) {
-		return make_tuple(0, 0);
+		return make_pair(0, 0);
 	}
 
 	size_t len = txt.length();
@@ -360,14 +379,14 @@ tuple<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
 		}
 	}
 
-	return make_tuple(start, end);
+	return make_pair(start, end);
 }
 
 string __ylib_core_trim(const string& txt) {
 
-	tuple<size_t, size_t> range = __ylib_core_find_nonspace(txt);
-	size_t start = get<0>(range);
-	size_t end = get<1>(range);
+	pair<size_t, size_t> range = __ylib_core_find_nonspace(txt);
+	size_t start = range.first;
+	size_t end = range.second;
 
 	if (start == end) {
 		return std::string();
@@ -391,7 +410,11 @@ string trim(const string&& txt) {
     return __ylib_core_trim(txt);
 }
 
-Bool isStrBlank(const char* s) {
+Bool isStrBlank(const char *s) {
+
+    if (isNull(s) == True) {
+        return True;
+    }
 
 	for(size_t i =0; ; i++) {
 		char c = s[i];
@@ -403,8 +426,7 @@ Bool isStrBlank(const char* s) {
 			return False;
 		}
 	}
-
-	return True;
+    // unreachable code
 }
 
 Bool isStrBlank(string& s) {
@@ -479,14 +501,14 @@ void println(const Exception& ex) {
 	println(txt);
 }
 
-void print(ostringstream& oss, const std::vector<string>& vec, Bool horizontal) {
+void print(ostringstream& oss, const vector<string>& vec, Bool horizontal) {
 
 
 	std::size_t size = vec.size();
 
 	oss << "[";
-	for (std::size_t i = 0; i < size; i++) {
-		const std::string& e = vec[i];
+	for (size_t i = 0; i < size; i++) {
+		const string& e = vec[i];
 		oss << e;
 		if ((i + 1) < size) {
 			if (horizontal == True) {
@@ -499,31 +521,29 @@ void print(ostringstream& oss, const std::vector<string>& vec, Bool horizontal) 
 	oss << "]";
 }
 
-string vec_to_string(const std::vector<string>& vec, Bool horizontal) {
+string vec_to_string(const vector<string>& vec, Bool horizontal) {
 	ostringstream oss;
 	print(oss, vec, horizontal);
 	return oss.str();
 }
 
-void println(const std::vector<string>& vec, Bool horizontal) {
+void println(const vector<string>& vec, Bool horizontal) {
 	println(vec_to_string(vec, horizontal));
 }
 
-void println(const std::vector<string>& vec) {
+void println(const vector<string>& vec) {
 	println(vec, True);
 }
 //====================================================
 
-
-
 // Program Arguments
 //====================================================
-std::vector<string> argToVec(UInt8 argc, char **argv, UInt8 minRequired) {
-	if (argc < minRequired){
+vector<string> argToVec(UInt8 argc, char **argv, UInt8 minRequired) {
+	if (argc < minRequired) {
 		throw Exception(sfput("The minimun required arguments is ${}, but got ${} instead.", minRequired, argc));
 	}
 
-	std::vector<string> ans;
+	vector<string> ans;
 	for (UInt8 i = 0; i < argc; i++) {
 		const char *arg = argv[i];
 		if (isStrBlank(arg) == True) {
@@ -534,5 +554,24 @@ std::vector<string> argToVec(UInt8 argc, char **argv, UInt8 minRequired) {
 	}
 
 	return ans;
+}
+//====================================================
+
+// Environment
+//====================================================
+optional<string> getEnvOpt(const char *name) {
+    const char *str = std::getenv(name);
+    if (isNull(str) == True) {
+        return std::nullopt;
+    }
+    return string{str};
+}
+
+string checkAndGetEnv(const char *name) {
+    auto envOpt = getEnvOpt(name);
+    if (envOpt.has_value()) {
+        return envOpt.value();
+    }
+    throw Exception(sfput("The environment variable ${} does not exist or might be empty.", name));
 }
 //====================================================

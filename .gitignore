@@ -5,6 +5,7 @@ Release
 logs
 build
 .vscode
+.idea
 
 # Mac
 *.DS_Store
@@ -14,6 +15,7 @@ CMakeFiles
 CMakeCache.txt
 *.cmake
 Makefile
+cmake-build-debug
 
 # Prerequisites
 *.d
