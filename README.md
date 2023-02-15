@@ -21,7 +21,7 @@ A header-only commons library for C++, that contains simple-to-use functions and
 
 The compile and run process is automated using **Docker** and some simple scripts.
 
-First, build the Docker:
+First, build the image:
 ```shell
 ./build-image.sh
 ```
