@@ -105,7 +105,7 @@ println(date.toString()); //output: 2023-02-27
 ```
 
 ```cpp
-string str = sfput("The '${}' lib is written in ${}.", "cpplib-core", "C++");
+string str = sfput("The '{}' lib is written in {}.", "cpplib-core", "C++");
 println(str); //output: The 'cpplib-core' lib is written in C++.
 ```
 

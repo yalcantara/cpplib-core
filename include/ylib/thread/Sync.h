@@ -1,8 +1,7 @@
 #pragma once
 #include <mutex>
 
-namespace ylib {
-namespace tread {
+namespace ylib::tread {
 class Sync {
 private:
 	std::mutex& mtx;
@@ -38,5 +37,4 @@ public:
 	}
 	//=========================================================================
 };
-}
 }

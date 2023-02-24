@@ -89,13 +89,20 @@ public:
 static const Bool True = Bool::trueVal();
 static const Bool False = Bool::falseVal();
 
-
 bool operator==(Bool& a, Bool& b) {
 	return a.val() == b.val();
 }
 
 bool operator==(Bool a, const Bool b) {
 	return a.val() == b.val();
+}
+
+bool operator!=(Bool& a, Bool& b) {
+    return a.val() != b.val();
+}
+
+bool operator!=(Bool a, const Bool b) {
+    return a.val() != b.val();
 }
 
 
@@ -253,7 +260,7 @@ string anyToStr(T& ref) {
 			return std::to_string(*((unsigned long*)ptr));
 		}
 
-		return std::to_string(*((int*)ptr));
+		return std::to_string(*((long long*)ptr));
 	}
 
 	if (is_floating_point < T > ::value) {
@@ -298,8 +305,8 @@ string sfput(string& txt, T arg) {
 		return "";
 	}
 
-	const char* KEY = "${}";
-	size_t KEYLEN = 3;
+	const char* KEY = "{}";
+	size_t KEYLEN = 2; // strlen(KEY)
 
 	size_t idx = txt.find(KEY);
 
@@ -314,7 +321,10 @@ string sfput(string& txt, T arg) {
 	for (; i < idx; i++) {
 		ss << txt.at(i);
 	}
-	
+
+
+    // Conversion
+    // ============================================
 	if (is_same<T, unsigned char>::value) {
 		//bug in macOs Clang
 		unsigned char *ptr = (unsigned char*)&arg;
@@ -322,6 +332,7 @@ string sfput(string& txt, T arg) {
 	} else {
 		ss << anyToStr(arg);
 	}
+    // ============================================
 
 	i = i + KEYLEN;
 	for (; i < len; i++) {
@@ -354,7 +365,7 @@ string sfput(const char* txt, T rep, Args... arg) {
 //=====================================================================
 pair<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
 	if (txt.length() == 0) {
-		return make_pair(0, 0);
+		return {0, 0};
 	}
 
 	size_t len = txt.length();
@@ -379,14 +390,12 @@ pair<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
 		}
 	}
 
-	return make_pair(start, end);
+	return {start, end};
 }
 
 string __ylib_core_trim(const string& txt) {
 
-	pair<size_t, size_t> range = __ylib_core_find_nonspace(txt);
-	size_t start = range.first;
-	size_t end = range.second;
+	auto [start, end] = __ylib_core_find_nonspace(txt);
 
 	if (start == end) {
 		return std::string();
@@ -394,12 +403,11 @@ string __ylib_core_trim(const string& txt) {
 
 	if (start > end) {
 		//this case should not happen, but let's protect ourself.
-		return std::string();
+		return {};
 	}
 
 	size_t diff = end - start;
-	string ans = txt.substr(start, diff);
-	return ans;
+	return txt.substr(start, diff);
 }
 
 string trim(const string& txt) {
@@ -436,28 +444,28 @@ Bool isStrBlank(string& s) {
 template<typename T>
 void checkParamNotNull(const char* name, T* val) {
 	if (val == nullptr || val == NULL) {
-		throw Exception(sfput("The param ${} can not be empty or null. Got nullptr.", name));
+		throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
 	}
 }
 
 void checkParamNotEmpty(const char* name, string& val) {
 	string* ptr = &val;
 	if (ptr == nullptr || ptr == NULL) {
-		throw Exception(sfput("The param ${} can not be empty or null. Got nullptr.", name));
+		throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
 	}
 
 	if (val.length() == 0) {
-		throw Exception(sfput("The param ${} can not be empty. Got ''.", name));
+		throw Exception(sfput("The param {} can not be empty. Got ''.", name));
 	}
 
 	if (isStrBlank(val) == True) {
-		throw Exception(sfput("The param ${} can not be empty. Got string with whitespaces.", name));
+		throw Exception(sfput("The param {} can not be empty. Got string with whitespaces.", name));
 	}
 }
 
 void checkParamNotEmpty(const char* name, const char* val) {
 	if (val == nullptr || val == NULL) {
-		throw Exception(sfput("The param ${} can not be empty or null. Got nullptr.", name));
+		throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
 	}
 	string sval{ val };
 	checkParamNotEmpty(name, sval);
@@ -467,7 +475,7 @@ template<typename T>
 void checkParamBetween(const char* name, T val, T min, T max) {
 	if (val < min || val > max) {
 		throw Exception(
-			sfput("The param ${} must be between (inclusive) ${} and ${}. Got: ${}.", 
+			sfput("The param {} must be between (inclusive) {} and {}. Got: {}.",
 					name, min, max, val));
 	}
 }
@@ -475,16 +483,24 @@ void checkParamBetween(const char* name, T val, T min, T max) {
 void checkParamBetween(const char* name, Int64 val, Int64 min, Int64 max) {
 	if (val < min || val > max) {
 		throw Exception(
-			sfput("The param ${} must be between (inclusive) ${} and ${}. Got: ${}.",
+			sfput("The param {} must be between (inclusive) {} and {}. Got: {}.",
 				name, min, max, val));
 	}
+}
+
+void checkParamEqualOrHigherThan(const char* name, Int64 val, Int64 min) {
+    if (val < min) {
+        throw Exception(
+                sfput("The param {} must be equal or higher than {}. Got: {}.",
+                      name, min, val));
+    }
 }
 
 //Positive is > 0.
 void checkParamIsPositive(const char* name, Int64 val) {
 	if (val <= 0) {
 		throw Exception(
-			sfput("The param ${} must be positive (higher than zero). Got: ${}.",
+			sfput("The param {} must be positive (higher than zero). Got: {}.",
 				name, val));
 	}
 }
@@ -540,14 +556,14 @@ void println(const vector<string>& vec) {
 //====================================================
 vector<string> argToVec(UInt8 argc, char **argv, UInt8 minRequired) {
 	if (argc < minRequired) {
-		throw Exception(sfput("The minimun required arguments is ${}, but got ${} instead.", minRequired, argc));
+		throw Exception(sfput("The minimun required arguments is {}, but got {} instead.", minRequired, argc));
 	}
 
 	vector<string> ans;
 	for (UInt8 i = 0; i < argc; i++) {
 		const char *arg = argv[i];
 		if (isStrBlank(arg) == True) {
-			throw Exception(sfput("The argument at index ${} is empty or blank.", i));
+			throw Exception(sfput("The argument at index {} is empty or blank.", i));
 		}
 		string sarg{arg};
 		ans.push_back(sarg);
@@ -572,6 +588,6 @@ string checkAndGetEnv(const char *name) {
     if (envOpt.has_value()) {
         return envOpt.value();
     }
-    throw Exception(sfput("The environment variable ${} does not exist or might be empty.", name));
+    throw Exception(sfput("The environment variable {} does not exist or might be empty.", name));
 }
 //====================================================

@@ -6,22 +6,20 @@
 #include <ylib/thread/Sync.h>
 
 
-namespace ylib {
-namespace logging {
+namespace ylib::logging {
 
 using namespace ylib::core;
 using ylib::tread::Sync;
 
-const char* DEFAULT_OUT_DIR = "logs/";
-Int8 __maxNameLen = 0;
+const char* CPPLIB_LOGGER_DEFAULT_OUT_DIR = "logs/";
+Int8 CPPLIB_LOGGER_MAX_NAME_LENGTH = 0;
 
 //Mutexes
 //Not a Read-Write lock mechanics. Just 2 simple lock:
 //1. When performing the actual write to output.
 //2. When retrieving an instance of Logger.
-std::mutex __logger_write_lock;
-std::mutex __logger_get_lock;
-
+static std::mutex CPPLIB_LOGGER_WRITE_LOCK;
+static std::mutex CPPLIB_LOGGER_GET_LOCK;
 
 class Entry {
 public:
@@ -33,7 +31,7 @@ public:
 
 /*
 A very simplistic logger implementation that is also, thread safe. All writes
-inmediatly flushes to the disk avoiding loss of messages in memory. Outputs the 
+immediately flushes to the disk avoiding loss of messages in memory. Outputs the
 log files to the logs/ directory, using current day a rolling appender.
 */
 class Logger {
@@ -45,7 +43,7 @@ private:
     }
 
     //The parameter entry has to be by-value to be sure we have a copy while writing 
-    //the contents. This prevent any modification in a race condition.
+    //the contents. This prevents any modification in a race condition.
     void write(Entry entry) {
 
         //Unique method that actually writes the content of entry.
@@ -53,7 +51,7 @@ private:
         //that may affect log order.
 
         //Synchronization
-        Sync sync{ __logger_write_lock };
+        Sync sync{CPPLIB_LOGGER_WRITE_LOCK};
 
         string level = entry.level;
         string time = entry.time.time().toString();
@@ -68,13 +66,13 @@ private:
         // We already checked that the name length is <= INT8_MAX int the method:
         // Logger::get
         Int8 len = (Int8)_name.length();
-        if (len >= __maxNameLen) {
+        if (len >= CPPLIB_LOGGER_MAX_NAME_LENGTH) {
             ss << _name;
         } else {
             ss << _name;
             // A compiler warning: the - operator returns an int. Here by this 
             // casting we are just making sure we are back to Int8.
-            Int8 diff = (Int8)(__maxNameLen - len);
+            Int8 diff = (Int8)(CPPLIB_LOGGER_MAX_NAME_LENGTH - len);
             ss << repeat(diff, ' ');
         }
         ss << "] - ";
@@ -100,19 +98,32 @@ public:
         size_t len = sname.length();
         checkParamBetween("name.length", len, 1, INT8_MAX);
 
-
         // Synchronization to prevent race condition
-        Sync sync{ __logger_get_lock };
-        __maxNameLen = std::max(__maxNameLen, (Int8)len);
+        Sync sync{CPPLIB_LOGGER_GET_LOCK };
+        CPPLIB_LOGGER_MAX_NAME_LENGTH = std::max(CPPLIB_LOGGER_MAX_NAME_LENGTH, (Int8)len);
 
-        Logger ans{ sname , DEFAULT_OUT_DIR};
-        return ans;
+        return { sname , CPPLIB_LOGGER_DEFAULT_OUT_DIR};
     }
+
+    // Rule of five
+    // =========================================================================
+    // 1. Copy Constructor
+    // No copy constructor allowed
+    Logger(const Logger&) = delete;
 
     // 2. Copy Assignment
     // no copy assignment allowed
     Logger& operator=(const Logger& other) = delete;
 
+    // 3. Move Constructor
+    // move constructor allowed
+
+    // 4. Move Assignment
+    // No move assignment allowed
+
+    // 5. Destructor
+    // No need to implement
+    // =========================================================================
 
 
     void info(const string& msg) {
@@ -168,5 +179,4 @@ public:
         warn(smsg);
     }
 };
-}
 }

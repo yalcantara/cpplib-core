@@ -7,6 +7,7 @@ docker run -it \
     -v ${PWD}/CMAkeLists.txt:${CPD}/CMakeLists.txt \
     -v ${PWD}/Docker_Debug:${CPD}/Debug \
     -v ${PWD}/main.cpp:${CPD}/main.cpp \
+    -v ${PWD}/test.cpp:${CPD}/test.cpp \
     -w ${CPD}/Debug \
      cpplib-core bash -c "
         cmake -DCMAKE_BUILD_TYPE=Debug ../ && \
