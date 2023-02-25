@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "ylib/core/time.h"
-#include "ylib/test.h"
+#include <ylib/core/time.h>
+#include <ylib/test.h>
 
 using namespace ylib::core;
 using namespace ylib::test;

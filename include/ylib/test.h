@@ -27,7 +27,7 @@ namespace ylib::test {
         ostringstream oss;
         oss << "\x1B[31mFAILURE:\033[0m ";
         oss << name;
-        oss << " - ";
+        oss << " - Exception: ";
         oss << ex.what();
 
         return oss.str();
@@ -58,6 +58,12 @@ namespace ylib::test {
 
     void assertTrue(bool ans) {
         if (ans != true) {
+            throw AssertException("Assert failed. Not true.");
+        }
+    }
+
+    void assertFalse(bool ans) {
+        if (ans != false) {
             throw AssertException("Assert failed. Not true.");
         }
     }

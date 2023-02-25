@@ -4,10 +4,13 @@
 
 #include <ylib/core/TimeTest.h>
 #include <ylib/core/LangTest.h>
+#include <ylib/utils/PropertiesTest.h>
 
 int main(){
     testTime();
     testLang();
+    testProperties();
+
 
     return EXIT_SUCCESS;
 }

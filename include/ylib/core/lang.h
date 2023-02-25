@@ -373,14 +373,13 @@ string sfput(const char *txt, T rep, Args... arg) {
 
 //Method parameters validation
 //=====================================================================
-pair<size_t, size_t> __ylib_core_find_nonspace(const string &txt) {
+optional<pair<size_t, size_t>> __ylib_core_find_nonspace(const string &txt) {
     if (txt.length() == 0) {
-        return {0, 0};
+        return pair{0, 0};
     }
 
     size_t len = txt.length();
-    size_t start = 0;
-    size_t end = len;
+    size_t start = len;
     for (size_t i = 0; i < len; i++) {
         char c = txt.at(i);
 
@@ -390,7 +389,12 @@ pair<size_t, size_t> __ylib_core_find_nonspace(const string &txt) {
         }
     }
 
-    for (Int64 i = len - 1; i >= 0; i--) {
+    if(start == len){
+        return nullopt;
+    }
+
+    size_t end = 0;
+    for (size_t i = len - 1; i > start; i--) {
 
         char c = txt.at(i);
 
@@ -400,16 +404,23 @@ pair<size_t, size_t> __ylib_core_find_nonspace(const string &txt) {
         }
     }
 
-    return {start, end};
+    if(end == 0){
+        //it means, it got never assigned in the loop, that is no whitespaces from the left
+        return pair{start, len};
+    }
+
+    return pair{start, end};
 }
 
 string __ylib_core_trim(const string &txt) {
 
-    auto [start, end] = __ylib_core_find_nonspace(txt);
+    auto nonSpaceOpt = __ylib_core_find_nonspace(txt);
 
-    if (start == end) {
+    if (nonSpaceOpt.has_value() == false) {
         return std::string();
     }
+
+    auto [start, end] = nonSpaceOpt.value();
 
     if (start > end) {
         //this case should not happen, but let's protect ourself.
