@@ -8,6 +8,7 @@
 #include <cstdint>
 #include <utility>
 #include <optional>
+#include <any>
 
 using namespace std;
 
@@ -58,46 +59,48 @@ constant True and False, for clarity and consistency.
 */
 class Bool {
 private:
-	bool _val;
+    bool _val;
 
-    Bool(bool val) :_val{val} {
+    Bool(bool val) : _val{val} {
     }
-    Bool(): Bool(false){
+
+    Bool() : Bool(false) {
 
     }
+
 public:
-	static Bool falseVal(){
+    static Bool falseVal() {
         return Bool(false);
     }
 
-    static Bool trueVal(){
+    static Bool trueVal() {
         return Bool(true);
     }
 
-	bool val() const {
-		return _val;
-	}
+    bool val() const {
+        return _val;
+    }
 
-	string toString() const {
-		if (_val) {
-			return "True";
-		}
-		return "False";
-	}
+    string toString() const {
+        if (_val) {
+            return "True";
+        }
+        return "False";
+    }
 };
 
 static const Bool True = Bool::trueVal();
 static const Bool False = Bool::falseVal();
 
-bool operator==(Bool& a, Bool& b) {
-	return a.val() == b.val();
+bool operator==(Bool &a, Bool &b) {
+    return a.val() == b.val();
 }
 
 bool operator==(Bool a, const Bool b) {
-	return a.val() == b.val();
+    return a.val() == b.val();
 }
 
-bool operator!=(Bool& a, Bool& b) {
+bool operator!=(Bool &a, Bool &b) {
     return a.val() != b.val();
 }
 
@@ -109,50 +112,50 @@ bool operator!=(Bool a, const Bool b) {
 // Core println
 //====================================================
 void print(char c) {
-	fputc(c, stdout);
-	fflush(stdout);
+    fputc(c, stdout);
+    fflush(stdout);
 }
 
-void print(const char* str) {
-	fputs(str, stdout);
-	fflush(stdout);
+void print(const char *str) {
+    fputs(str, stdout);
+    fflush(stdout);
 }
 
 void print(float val) {
-	fprintf(stdout, "%.2f", val);
-	fflush(stdout);
+    fprintf(stdout, "%.2f", val);
+    fflush(stdout);
 }
 
-void print(std::string& str) {
-	const char* ptr = str.c_str();
-	fputs(ptr, stdout);
-	fflush(stdout);
+void print(string &str) {
+    const char *ptr = str.c_str();
+    fputs(ptr, stdout);
+    fflush(stdout);
 }
 
 void println() {
-	fputc('\n', stdout);
-	fflush(stdout);
+    fputc('\n', stdout);
+    fflush(stdout);
 }
 
 void println(char c) {
-	fputc(c, stdout);
-	fputc('\n', stdout);
-	fflush(stdout);
+    fputc(c, stdout);
+    fputc('\n', stdout);
+    fflush(stdout);
 }
 
 void println(int val) {
-	fprintf(stdout, "%d\n", val);
-	fflush(stdout);
+    fprintf(stdout, "%d\n", val);
+    fflush(stdout);
 }
 
 void println(long int val) {
-	fprintf(stdout, "%ld\n", val);
-	fflush(stdout);
+    fprintf(stdout, "%ld\n", val);
+    fflush(stdout);
 }
 
 void println(unsigned long int val) {
-	fprintf(stdout, "%lu\n", val);
-	fflush(stdout);
+    fprintf(stdout, "%lu\n", val);
+    fflush(stdout);
 }
 
 void println(unsigned int val) {
@@ -161,29 +164,29 @@ void println(unsigned int val) {
 }
 
 void println(float val) {
-	printf("%.2f\n", val);
-	fflush(stdout);
+    printf("%.2f\n", val);
+    fflush(stdout);
 }
 
 void println(double val) {
-	printf("%.2f\n", val);
-	fflush(stdout);
+    printf("%.2f\n", val);
+    fflush(stdout);
 }
 
-void println(const char* str, ...) {
-	va_list args;
-	va_start (args, str);
-	vfprintf(stdout, str, args);
-	va_end(args);
-	fputc('\n', stdout);
-	fflush(stdout);
+void println(const char *str, ...) {
+    va_list args;
+    va_start (args, str);
+    vfprintf(stdout, str, args);
+    va_end(args);
+    fputc('\n', stdout);
+    fflush(stdout);
 }
 
 void println(std::string str) {
-	const char* ptr = str.c_str();
-	fputs(ptr, stdout);
-	fputc('\n', stdout);
-	fflush(stdout);
+    const char *ptr = str.c_str();
+    fputs(ptr, stdout);
+    fputc('\n', stdout);
+    fflush(stdout);
 }
 //====================================================
 
@@ -192,29 +195,29 @@ void println(std::string str) {
 //====================================================
 class Exception : public exception {
 protected:
-	string _msg;
+    string _msg;
 
 public:
-	Exception() : _msg("") {
+    Exception() : _msg("") {
 
-	}
+    }
 
-	Exception(string msg) : _msg(msg) {
+    Exception(string msg) : _msg(msg) {
 
-	}
+    }
 
-	Exception(const char* msg) :
-		_msg(msg) {
+    Exception(const char *msg) :
+            _msg(msg) {
 
-	}
+    }
 
-	virtual const char* what() const throw () {
-		return _msg.c_str();
-	}
+    virtual const char *what() const throw() {
+        return _msg.c_str();
+    }
 
-	virtual ~Exception() {
+    virtual ~Exception() {
 
-	}
+    }
 };
 //====================================================
 
@@ -232,189 +235,196 @@ Bool isNull(const void *ptr) {
 
 template<typename T>
 bool is_primitive() {
-	return is_arithmetic < T > ::value || is_same<T, bool>::value;
+    return is_arithmetic<T>::value || is_same<T, bool>::value;
 }
 
 template<typename T>
-string anyToStr(T& ref) {
+string anyToStr(T &ref) {
 
-	T* ptr = &ref;
-	if (ptr == nullptr) {
-		return "nullptr";
-	}
+    T *ptr = &ref;
+    if (ptr == nullptr) {
+        return "nullptr";
+    }
 
-	if (is_same<T, bool>::value || is_same<T, const bool>::value) {
-		bool casted = *((bool*)ptr);
-		if (casted) {
-			return "true";
-		}
-		return "false";
-	}
+    if (is_same<T, bool>::value || is_same<T, const bool>::value) {
+        bool casted = *((bool *) ptr);
+        if (casted) {
+            return "true";
+        }
+        return "false";
+    }
 
-	if (is_integral < T > ::value) {
+    if (is_same<T, Bool>::value || is_same<T, const Bool>::value) {
+        Bool casted = *((Bool *) ptr);
+        if (casted == True) {
+            return "True";
+        }
+        return "False";
+    }
 
-		if (is_unsigned < T > ::value) {
-			if(is_same<T, unsigned int>::value) {
-				return std::to_string(*((unsigned int*)ptr));
-			}
-			return std::to_string(*((unsigned long*)ptr));
-		}
+    if (is_integral<T>::value) {
 
-		return std::to_string(*((long long*)ptr));
-	}
+        if (is_unsigned<T>::value) {
+            if (is_same<T, unsigned int>::value) {
+                return std::to_string(*((unsigned int *) ptr));
+            }
+            return std::to_string(*((unsigned long *) ptr));
+        }
 
-	if (is_floating_point < T > ::value) {
-		return std::to_string(*((double*)ptr));
-	}
+        return std::to_string(*((long long *) ptr));
+    }
 
-	if (is_same<T, size_t>::value || is_same<T, const size_t>::value) {
-		return std::to_string(*((size_t*)ptr));
-	}
+    if (is_floating_point<T>::value) {
+        return std::to_string(*((double *) ptr));
+    }
 
-	if (is_same<T, string>::value || is_same<T, const string>::value) {
-		return *((string*)ptr);
-	}
+    if (is_same<T, size_t>::value || is_same<T, const size_t>::value) {
+        return std::to_string(*((size_t *) ptr));
+    }
 
-	if (is_same<T, const char*>::value) {
-		stringstream ss;
-		ss << ref;
-		return ss.str();
-	}
+    if (is_same<T, string>::value || is_same<T, const string>::value) {
+        return *((string *) ptr);
+    }
 
-	if (is_array < T > ::value) {
-		return "[array]";
-	}
+    if (is_same<T, const char *>::value) {
+        std::any val = ref;
+        return {any_cast<const char *>(val)};
+    }
 
-	if (is_pointer < T > ::value) {
-		return "[pointer]";
-	}
+    if (is_array<T>::value) {
+        return "[array]";
+    }
 
-	if (is_class < T > ::value) {
-		return "[class]";
-	}
+    if (is_pointer<T>::value) {
+        return "[pointer]";
+    }
 
-	return "[other]";
+    if (is_class<T>::value) {
+        return "[class]";
+    }
+
+    return "[other]";
 }
 
 template<typename T>
-string sfput(string& txt, T arg) {
+string sfput(string &txt, T arg) {
 
-	size_t len = txt.length();
+    size_t len = txt.length();
 
-	if (len == 0) {
-		return "";
-	}
+    if (len == 0) {
+        return "";
+    }
 
-	const char* KEY = "{}";
-	size_t KEYLEN = 2; // strlen(KEY)
+    const char *KEY = "{}";
+    size_t KEYLEN = 2; // strlen(KEY)
 
-	size_t idx = txt.find(KEY);
+    size_t idx = txt.find(KEY);
 
-	if (idx == string::npos) {
-		string copy{ txt };
-		return copy;
-	}
+    if (idx == string::npos) {
+        string copy{txt};
+        return copy;
+    }
 
-	std::stringstream ss;
+    std::stringstream ss;
 
-	size_t i = 0;
-	for (; i < idx; i++) {
-		ss << txt.at(i);
-	}
+    size_t i = 0;
+    for (; i < idx; i++) {
+        ss << txt.at(i);
+    }
 
 
     // Conversion
     // ============================================
-	if (is_same<T, unsigned char>::value) {
-		//bug in macOs Clang
-		unsigned char *ptr = (unsigned char*)&arg;
-		ss << std::to_string(*ptr);
-	} else {
-		ss << anyToStr(arg);
-	}
+    if (is_same<T, unsigned char>::value) {
+        //bug in macOs Clang
+        unsigned char *ptr = (unsigned char *) &arg;
+        ss << std::to_string(*ptr);
+    } else {
+        ss << anyToStr(arg);
+    }
     // ============================================
 
-	i = i + KEYLEN;
-	for (; i < len; i++) {
-		ss << txt.at(i);
-	}
-	
-	return ss.str();
+    i = i + KEYLEN;
+    for (; i < len; i++) {
+        ss << txt.at(i);
+    }
+
+    return ss.str();
 }
 
-string sfput(string& txt) {
-	string msg{ txt };
-	return msg;
-}
-
-template<typename T, typename... Args>
-string sfput(string& txt, T rep, Args... arg) {
-	string mid = sfput(txt, rep);
-	return sfput(mid, arg...);
+string sfput(string &txt) {
+    string msg{txt};
+    return msg;
 }
 
 template<typename T, typename... Args>
-string sfput(const char* txt, T rep, Args... arg) {
-	string stxt{ txt };
-	string mid = sfput(stxt, rep);
-	return sfput(mid, arg...);
+string sfput(string &txt, T rep, Args... arg) {
+    string mid = sfput(txt, rep);
+    return sfput(mid, arg...);
+}
+
+template<typename T, typename... Args>
+string sfput(const char *txt, T rep, Args... arg) {
+    string stxt{txt};
+    string mid = sfput(stxt, rep);
+    return sfput(mid, arg...);
 }
 
 
 //Method parameters validation
 //=====================================================================
-pair<size_t, size_t> __ylib_core_find_nonspace(const string& txt) {
-	if (txt.length() == 0) {
-		return {0, 0};
-	}
+pair<size_t, size_t> __ylib_core_find_nonspace(const string &txt) {
+    if (txt.length() == 0) {
+        return {0, 0};
+    }
 
-	size_t len = txt.length();
-	size_t start = 0;
-	size_t end = len;
-	for (size_t i = 0; i < len; i++) {
-		char c = txt.at(i);
+    size_t len = txt.length();
+    size_t start = 0;
+    size_t end = len;
+    for (size_t i = 0; i < len; i++) {
+        char c = txt.at(i);
 
-		if (std::isspace(c) == false) {
-			start = i;
-			break;
-		}
-	}
+        if (std::isspace(c) == false) {
+            start = i;
+            break;
+        }
+    }
 
-	for (Int64 i = len - 1; i >= 0; i--) {
+    for (Int64 i = len - 1; i >= 0; i--) {
 
-		char c = txt.at(i);
+        char c = txt.at(i);
 
-		if (std::isspace(c) == false) {
-			end = i + 1;
-			break;
-		}
-	}
+        if (std::isspace(c) == false) {
+            end = i + 1;
+            break;
+        }
+    }
 
-	return {start, end};
+    return {start, end};
 }
 
-string __ylib_core_trim(const string& txt) {
+string __ylib_core_trim(const string &txt) {
 
-	auto [start, end] = __ylib_core_find_nonspace(txt);
+    auto [start, end] = __ylib_core_find_nonspace(txt);
 
-	if (start == end) {
-		return std::string();
-	}
+    if (start == end) {
+        return std::string();
+    }
 
-	if (start > end) {
-		//this case should not happen, but let's protect ourself.
-		return {};
-	}
+    if (start > end) {
+        //this case should not happen, but let's protect ourself.
+        return {};
+    }
 
-	size_t diff = end - start;
-	return txt.substr(start, diff);
+    size_t diff = end - start;
+    return txt.substr(start, diff);
 }
 
-string trim(const string& txt) {
-	return __ylib_core_trim(txt);
+string trim(const string &txt) {
+    return __ylib_core_trim(txt);
 }
 
-string trim(const string&& txt) {
+string trim(const string &&txt) {
     return __ylib_core_trim(txt);
 }
 
@@ -424,71 +434,71 @@ Bool isStrBlank(const char *s) {
         return True;
     }
 
-	for(size_t i =0; ; i++) {
-		char c = s[i];
-		if (c == '\0') {
-			return True;
-		}
+    for (size_t i = 0;; i++) {
+        char c = s[i];
+        if (c == '\0') {
+            return True;
+        }
 
-		if (std::isblank(c) == false) {
-			return False;
-		}
-	}
+        if (std::isblank(c) == false) {
+            return False;
+        }
+    }
     // unreachable code
 }
 
-Bool isStrBlank(string& s) {
-	return isStrBlank(s.c_str());
+Bool isStrBlank(string &s) {
+    return isStrBlank(s.c_str());
 }
 
 template<typename T>
-void checkParamNotNull(const char* name, T* val) {
-	if (val == nullptr || val == NULL) {
-		throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
-	}
+void checkParamNotNull(const char *name, T *val) {
+    if (val == nullptr || val == NULL) {
+        throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
+    }
 }
 
-void checkParamNotEmpty(const char* name, string& val) {
-	string* ptr = &val;
-	if (ptr == nullptr || ptr == NULL) {
-		throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
-	}
+void checkParamNotEmpty(const char *name, string &val) {
+    string *ptr = &val;
+    if (ptr == nullptr || ptr == NULL) {
+        throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
+    }
 
-	if (val.length() == 0) {
-		throw Exception(sfput("The param {} can not be empty. Got ''.", name));
-	}
+    if (val.length() == 0) {
+        throw Exception(sfput("The param {} can not be empty. Got ''.", name));
+    }
 
-	if (isStrBlank(val) == True) {
-		throw Exception(sfput("The param {} can not be empty. Got string with whitespaces.", name));
-	}
+    if (isStrBlank(val) == True) {
+        throw Exception(sfput("The param {} can not be empty. Got string with whitespaces.", name));
+    }
 }
 
-void checkParamNotEmpty(const char* name, const char* val) {
-	if (val == nullptr || val == NULL) {
-		throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
-	}
-	string sval{ val };
-	checkParamNotEmpty(name, sval);
+void checkParamNotEmpty(const char *name, const char *val) {
+    if (val == nullptr || val == NULL) {
+        throw Exception(sfput("The param {} can not be empty or null. Got nullptr.", name));
+    }
+    string sval{val};
+    checkParamNotEmpty(name, sval);
 }
 
 template<typename T>
-void checkParamBetween(const char* name, T val, T min, T max) {
-	if (val < min || val > max) {
-		throw Exception(
-			sfput("The param {} must be between (inclusive) {} and {}. Got: {}.",
-					name, min, max, val));
-	}
+void checkParamBetween(const char *name, T val, T min, T max) {
+    if (val < min || val > max) {
+        throw Exception(
+                sfput("The param {} must be between (inclusive) {} and {}. Got: {}.",
+                      name, min, max, val));
+    }
 }
 
-void checkParamBetween(const char* name, Int64 val, Int64 min, Int64 max) {
-	if (val < min || val > max) {
-		throw Exception(
-			sfput("The param {} must be between (inclusive) {} and {}. Got: {}.",
-				name, min, max, val));
-	}
+void checkParamBetween(const char *name, Int64 val, Int64 min, Int64 max) {
+    if (val < min || val > max) {
+        throw Exception(
+                sfput("The param {} must be between (inclusive) {} and {}. Got: {}.",
+                      name, min, max, val));
+    }
 }
 
-void checkParamEqualOrHigherThan(const char* name, Int64 val, Int64 min) {
+void checkParamEqualOrHigherThan(const char *name, Int64 val, Int64 min) {
     if (val < min) {
         throw Exception(
                 sfput("The param {} must be equal or higher than {}. Got: {}.",
@@ -497,79 +507,79 @@ void checkParamEqualOrHigherThan(const char* name, Int64 val, Int64 min) {
 }
 
 //Positive is > 0.
-void checkParamIsPositive(const char* name, Int64 val) {
-	if (val <= 0) {
-		throw Exception(
-			sfput("The param {} must be positive (higher than zero). Got: {}.",
-				name, val));
-	}
+void checkParamIsPositive(const char *name, Int64 val) {
+    if (val <= 0) {
+        throw Exception(
+                sfput("The param {} must be positive (higher than zero). Got: {}.",
+                      name, val));
+    }
 }
 //====================================================
 
 
 // Class printing
 //====================================================
-void println(const Exception& ex) {
-	const char* msg = ex.what();
-	string smsg{ msg };
-	string name = typeid(ex).name();
-	string txt = "Exception thrown " + name +": " + smsg;
-	println(txt);
+void println(const Exception &ex) {
+    const char *msg = ex.what();
+    string smsg{msg};
+    string name = typeid(ex).name();
+    string txt = "Exception thrown " + name + ": " + smsg;
+    println(txt);
 }
 
-void print(ostringstream& oss, const vector<string>& vec, Bool horizontal) {
+void print(ostringstream &oss, const vector<string> &vec, Bool horizontal) {
 
 
-	std::size_t size = vec.size();
+    std::size_t size = vec.size();
 
-	oss << "[";
-	for (size_t i = 0; i < size; i++) {
-		const string& e = vec[i];
-		oss << e;
-		if ((i + 1) < size) {
-			if (horizontal == True) {
-				oss << ", ";
-			} else {
-				oss << "," << std::endl;
-			}
-		}
-	}
-	oss << "]";
+    oss << "[";
+    for (size_t i = 0; i < size; i++) {
+        const string &e = vec[i];
+        oss << e;
+        if ((i + 1) < size) {
+            if (horizontal == True) {
+                oss << ", ";
+            } else {
+                oss << "," << std::endl;
+            }
+        }
+    }
+    oss << "]";
 }
 
-string vec_to_string(const vector<string>& vec, Bool horizontal) {
-	ostringstream oss;
-	print(oss, vec, horizontal);
-	return oss.str();
+string vec_to_string(const vector<string> &vec, Bool horizontal) {
+    ostringstream oss;
+    print(oss, vec, horizontal);
+    return oss.str();
 }
 
-void println(const vector<string>& vec, Bool horizontal) {
-	println(vec_to_string(vec, horizontal));
+void println(const vector<string> &vec, Bool horizontal) {
+    println(vec_to_string(vec, horizontal));
 }
 
-void println(const vector<string>& vec) {
-	println(vec, True);
+void println(const vector<string> &vec) {
+    println(vec, True);
 }
 //====================================================
 
 // Program Arguments
 //====================================================
 vector<string> argToVec(UInt8 argc, char **argv, UInt8 minRequired) {
-	if (argc < minRequired) {
-		throw Exception(sfput("The minimun required arguments is {}, but got {} instead.", minRequired, argc));
-	}
+    if (argc < minRequired) {
+        throw Exception(sfput("The minimun required arguments is {}, but got {} instead.", minRequired, argc));
+    }
 
-	vector<string> ans;
-	for (UInt8 i = 0; i < argc; i++) {
-		const char *arg = argv[i];
-		if (isStrBlank(arg) == True) {
-			throw Exception(sfput("The argument at index {} is empty or blank.", i));
-		}
-		string sarg{arg};
-		ans.push_back(sarg);
-	}
+    vector<string> ans;
+    for (UInt8 i = 0; i < argc; i++) {
+        const char *arg = argv[i];
+        if (isStrBlank(arg) == True) {
+            throw Exception(sfput("The argument at index {} is empty or blank.", i));
+        }
+        string sarg{arg};
+        ans.push_back(sarg);
+    }
 
-	return ans;
+    return ans;
 }
 //====================================================
 
