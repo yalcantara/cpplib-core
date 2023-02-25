@@ -11,4 +11,4 @@ add_executable(main main.cpp)
 add_executable(test test.cpp)
 
 include_directories(include)
-target_include_directories(test PUBLIC unit-test)
+target_include_directories(test PUBLIC include-test)
