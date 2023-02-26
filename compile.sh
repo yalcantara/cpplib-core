@@ -4,6 +4,7 @@ CPD=/usr/src/cpplib-core
 docker run -it \
     --rm \
     -v ${PWD}/include:${CPD}/include \
+    -v ${PWD}/test-include:${CPD}/test-include \
     -v ${PWD}/CMAkeLists.txt:${CPD}/CMakeLists.txt \
     -v ${PWD}/Docker_Debug:${CPD}/Debug \
     -v ${PWD}/main.cpp:${CPD}/main.cpp \

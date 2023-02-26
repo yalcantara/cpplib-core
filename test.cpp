@@ -6,11 +6,13 @@
 #include <ylib/core/LangTest.h>
 #include <ylib/utils/PropertiesTest.h>
 
+using namespace ylib::core;
+using namespace ylib::utils;
+
 int main(){
     testTime();
     testLang();
     testProperties();
-
 
     return EXIT_SUCCESS;
 }
