@@ -31,7 +31,6 @@ namespace ylib::utils {
         }
     };
 
-
     class PropertiesParser {
     public:
         Bool isComment(string &line) {
@@ -88,5 +87,10 @@ namespace ylib::utils {
             return props;
         }
     };
+
+    Properties loadProperties(fs::path path){
+        PropertiesParser parser;
+        return parser.load(path);
+    }
 
 }
