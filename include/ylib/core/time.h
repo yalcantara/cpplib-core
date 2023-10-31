@@ -363,7 +363,7 @@ Represents the current time at GMT-0 up to milliseconds resolution.
             validate();
         }
 
-        Time(tm &t, UInt16 milli) : Time((UInt8) t.tm_hour, (UInt8) t.tm_min, (UInt8) t.tm_sec, (UInt16) milli) {
+        Time(tm &t, UInt16 milli) : Time((UInt8) t.tm_hour, (UInt8) t.tm_min, (UInt8) t.tm_sec, milli) {
         }
 
         Time(UInt8 hour, UInt8 min, UInt8 sec) : Time(hour, min, sec, 0) {
@@ -522,7 +522,7 @@ Represents the current time, using the current system locale, up to milliseconds
             return _time;
         }
 
-        string toString() {
+        string toString() const {
             return sfput("{} {}", _date.toString(), _time.toString());
         }
     };

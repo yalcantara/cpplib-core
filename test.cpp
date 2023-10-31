@@ -4,6 +4,7 @@
 
 #include <ylib/core/TimeTest.h>
 #include <ylib/core/LangTest.h>
+#include <ylib/core/StringUtilsTest.h>
 #include <ylib/utils/PropertiesTest.h>
 
 using namespace ylib::core;
@@ -13,6 +14,7 @@ int main(){
     testTime();
     testLang();
     testProperties();
+    testSUtils();
 
     return EXIT_SUCCESS;
 }
