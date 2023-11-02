@@ -31,7 +31,7 @@ Then, compile & run:
 ./run.sh
 ```
 
-This will run the default `main` program which writes a hello message to the console output, as well to the file system as a log. The log file will be created at `Docker_Debug/logs/<current_date>.log`. The `${project}/Docker_Debug` folder maps to `${project}/Debug` in the Docker container.
+This will run the default `core-main` program which writes a hello message to the console output, as well to the file system as a log. The log file will be created at `Docker_Debug/logs/<current_date>.log`. The `${project}/Docker_Debug` folder maps to `${project}/Debug` in the Docker container.
 
 ```console
 Docker container created. About to run program main.
@@ -49,7 +49,7 @@ You can add cpplib-core to your project by using `cmake`. In your `CMakeLists.tx
 ```
 include_directories( <path-to-cpplib/include> )
 
-target_link_libraries( main )
+target_link_libraries( core-main )
 ```
 
 ## Examples
