@@ -7,5 +7,15 @@ docker run -it \
     -w ${CPD}/Debug \
      cpplib-core bash -c "
         echo \"Docker container created. About to run program main.\" && \
-        ./main
+        ./core-main
      "
+echo "====================================================================="
+docker run -it \
+    --rm \
+    -v ${PWD}/Docker_Debug:${CPD}/Debug \
+    -v ${PWD}/test-resources:${CPD}/test-resources \
+    -w ${CPD}/Debug \
+     cpplib-core bash -c "
+        echo \"Docker container created. About to run program test.\" && \
+        ./core-test
+    "

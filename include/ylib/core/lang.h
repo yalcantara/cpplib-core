@@ -148,13 +148,13 @@ void println(int val) {
     fflush(stdout);
 }
 
-void println(long int val) {
-    fprintf(stdout, "%ld\n", val);
+void println(long long val) {
+    fprintf(stdout, "%lld\n", val);
     fflush(stdout);
 }
 
-void println(unsigned long int val) {
-    fprintf(stdout, "%lu\n", val);
+void println(unsigned long long val) {
+    fprintf(stdout, "%llu\n", val);
     fflush(stdout);
 }
 

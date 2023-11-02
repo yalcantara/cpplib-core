@@ -7,6 +7,7 @@ docker run -it \
     -v ${PWD}/test-include:${CPD}/test-include \
     -v ${PWD}/CMAkeLists.txt:${CPD}/CMakeLists.txt \
     -v ${PWD}/Docker_Debug:${CPD}/Debug \
+    -v ${PWD}/test-resources:${CPD}/test-resources \
     -v ${PWD}/core-main.cpp:${CPD}/core-main.cpp \
     -v ${PWD}/core-test.cpp:${CPD}/core-test.cpp \
     -w ${CPD}/Debug \
