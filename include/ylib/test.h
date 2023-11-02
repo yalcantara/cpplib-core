@@ -66,7 +66,13 @@ namespace ylib::test {
 
     void assertFalse(bool ans) {
         if (ans != false) {
-            throw AssertException("Assert failed. Not true.");
+            throw AssertException("Assert failed. Not false.");
+        }
+    }
+
+    void assertFalse(Bool ans) {
+        if (ans != False) {
+            throw AssertException("Assert failed. Not False.");
         }
     }
 
@@ -101,8 +107,7 @@ namespace ylib::test {
             cpplib_core_assert_failed(monthToString(expected), monthToString(actual));
         }
     }
-
-
+    
     void TEST(const char *name, std::function<void()> f) {
         try {
             f();
