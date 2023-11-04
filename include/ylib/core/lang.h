@@ -439,6 +439,21 @@ string trim(const string &&txt) {
     return __ylib_core_trim(txt);
 }
 
+Bool isStrBlank(string_view &view) {
+    
+    size_t len = view.length();
+    
+    for (size_t i = 0; i < len; i++) {
+        char c = view.at(i);
+        
+        if (isblank(c) == false) {
+            return False;
+        }
+    }
+    
+    return True;
+}
+
 Bool isStrBlank(const char *s) {
 
     if (isNull(s) == True) {
@@ -558,14 +573,14 @@ void print(ostringstream &oss, const vector<string> &vec, Bool horizontal) {
     oss << "]";
 }
 
-string vec_to_string(const vector<string> &vec, Bool horizontal) {
+string vecToString(const vector<string> &vec, Bool horizontal) {
     ostringstream oss;
     print(oss, vec, horizontal);
     return oss.str();
 }
 
 void println(const vector<string> &vec, Bool horizontal) {
-    println(vec_to_string(vec, horizontal));
+    println(vecToString(vec, horizontal));
 }
 
 void println(const vector<string> &vec) {
