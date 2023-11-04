@@ -9,7 +9,6 @@ namespace ylib::core {
 
 using namespace std;
 
-
 string fieldToString(const char *field, const optional<string> &val) {
     if (val.has_value() == true) {
         stringstream ss;
@@ -142,10 +141,20 @@ string toLower(const char *txt) {
     return toLower(stxt);
 }
 
+string format(double val, UInt16 precision) {
+    
+    std::stringstream ss;
+    ss.precision(precision);
+    ss << std::fixed << val;
+    return ss.str();
+}
+
 class ToStringBuilder {
 private:
     vector<string> keys;
     vector<string> values;
+    string unassignedStr;
+    UInt16 precision;
     
     void doAppend(string key, string val) {
         keys.push_back(key);
@@ -154,22 +163,95 @@ private:
 
 public:
     
-    void append(const char *key, string val) {
-        string sval = "\"" + val + "\"";
-        doAppend(string(key), sval);
+    ToStringBuilder(string unassignedStr, UInt16 precision) : unassignedStr(unassignedStr), precision(precision) {
+    
     }
     
-    void append(string key, string val) {
-        string sval = "\"" + val + "\"";
-        doAppend(key, sval);
+    ToStringBuilder() : unassignedStr("(unassigned)"), precision(2) {
+    
+    }
+    
+    void append(const char *key, const string &val, Bool addQuote) {
+        if (addQuote == True) {
+            string sval = "\"" + val + "\"";
+            doAppend(string(key), sval);
+        } else {
+            doAppend(string(key), val);
+        }
+    }
+    
+    void append(const char *key, const string &val) {
+        append(key, val, True);
+    }
+    
+    void append(const string &key, const string &val, Bool addQuote) {
+        if (addQuote == True) {
+            string sval = "\"" + val + "\"";
+            doAppend(key, sval);
+        } else {
+            doAppend(string(key), val);
+        }
+    }
+    
+    void append(const string &key, const string &val) {
+        append(key, val, True);
     }
     
     void append(const char *key, UInt64 val) {
         doAppend(string(key), std::to_string(val));
     }
     
-    void append(string key, Int64 val) {
+    void append(const char *key, Int64 val) {
         doAppend(string(key), std::to_string(val));
+    }
+    
+    void append(const string &key, Int64 val) {
+        doAppend(string(key), std::to_string(val));
+    }
+    
+    void append(const string &key, const vector<string> &val) {
+        doAppend(string(key), vecToString(val, True));
+    }
+    
+    void appendOpt(const char *key, const optional<string> &val) {
+        if (val) {
+            append(key, val.value());
+        } else {
+            append(key, unassignedStr, False);
+        }
+    }
+    
+    void appendOpt(const char *key, const optional<Int64> &val) {
+        if (val) {
+            append(key, val.value());
+        } else {
+            append(key, unassignedStr, False);
+        }
+    }
+    
+    void appendOpt(const char *key, const optional<double> &val) {
+        if (val) {
+            append(key, format(val.value(), precision), False);
+        } else {
+            append(key, unassignedStr, False);
+        }
+    }
+    
+    void appendOpt(const char *key, const optional<vector<string>> &val) {
+        if (val) {
+            append(key, val.value());
+        } else {
+            append(key, unassignedStr, False);
+        }
+    }
+    
+    template<typename T, typename I>
+    void appendOpt(const char *key, optional<I> val, T supplier) {
+        if (val) {
+            append(key, supplier(val.value()));
+        } else {
+            append(key, unassignedStr, False);
+        }
     }
     
     string str() {
