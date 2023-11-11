@@ -10,11 +10,11 @@
 using namespace ylib::core;
 using namespace ylib::utils;
 
-int main(){
+int main() {
     testTime();
     testLang();
     testSUtils();
     testProperties();
-
+    
     return EXIT_SUCCESS;
 }
